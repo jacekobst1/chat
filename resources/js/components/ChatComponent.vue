@@ -8,17 +8,24 @@
                     <div class="card-body">
                         <ul class="pl-0">
                             <li
-                                    v-for="message in messages"
-                                    :key="message.id"
+                                    v-for="(message, index) in messages"
+                                    :key="index"
                                     class="my-3"
                             >
                                 <div
-                                        v-if="message.user.id === userId"
-                                        class="border rounded px-3 py-2 badge-light"
+                                        v-if="message.user_id === userId"
+                                        class="border rounded px-3 py-2 badge-light text-right"
                                 >
-                                        <div class="col-12 px-0 text-right">
-                                            {{ message.content }}
-                                        </div>
+                                    <div class="col-12 px-0">
+                                        <small class="font-weight-bold">
+                                            <span style="font-size: 8px;">
+                                                {{ message.created_at }}
+                                            </span>
+                                        </small>
+                                    </div>
+                                    <div class="col-12 px-0">
+                                        {{ message.content }}
+                                    </div>
                                 </div>
                                 <div
                                         v-else
@@ -64,13 +71,6 @@
                 </div>
             </div>
         </div>
-        <button
-            @click="getMessages"
-            type="button"
-            class="btn btn-secondary"
-        >
-            GET NEW
-        </button>
     </div>
 </template>
 
@@ -85,12 +85,14 @@
             return {
                 messages: [],
                 content: '',
-                userId: null,
+                userId: null
             }
         },
         methods: {
-            getMessages: function() {
-                let last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
+            getMessages: function(last_message_id = 0) {
+                if (!last_message_id) {
+                    last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : null;
+                }
                 Vue.axios.get('/getNewMessages', {
                         params: {
                             'last_message_id': last_message_id
@@ -105,22 +107,24 @@
                 if (this.content) {
                     let last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
                     Vue.axios.post('/storeMessage', {
-                        'user_id': this.userId,
-                        'content': this.content,
-                        'last_message_id': last_message_id,
-                    });
-                    this.content = '';
-                    setTimeout(this.getMessages, 100);
+                            'user_id': this.userId,
+                            'content': this.content,
+                            'last_message_id': last_message_id,
+                        })
+                        .then((response) => {
+                            this.content = '';
+                            if (!this.messages.length) {
+                                this.getMessages(response.data.message_id-1);
+                            }
+                        });
                 }
-            }
+            },
         },
         created() {
             this.messages = this.messagesProp;
             this.userId = this.userIdProp;
-        },
-        mounted() {
             setInterval(this.getMessages, 500);
-        }
+        },
     }
 </script>
 

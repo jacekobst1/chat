@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 
 class LoginController extends Controller
 {
@@ -43,21 +44,28 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $this->validateLogin($request);
+
         $user = $this->getOrCreateUser($request->get('email'));
+        $this->saveLoginDate($user);
+
         auth()->loginUsingId($user->id);
         return $this->sendLoginResponse($request);
     }
 
-    protected function validateLogin(Request $request)
+    private function validateLogin(Request $request)
     {
         $request->validate([
             $this->username() => 'required|string',
         ]);
     }
 
-    public function getOrCreateUser($email): User
+    private function getOrCreateUser($email): User
     {
-        return User::firstOrCreate(['email' => $email]);
+        return User::firstOrCreate(['email' => $email], ['last_login_date' => Date::now()]);
     }
 
+    private function saveLoginDate($user): void
+    {
+        $user->update(['last_login_date' => Date::now()]);
+    }
 }

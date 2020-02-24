@@ -10,7 +10,7 @@ class MessageRepository
 {
     public static function getMessagesCreatedAfterDate(): Collection
     {
-        return Message::whereDate('created_at', '<=', Date::now())
+        return Message::where('created_at', '>=', auth()->user()->last_login_date)
             ->with('user:id,email')
             ->get();
     }

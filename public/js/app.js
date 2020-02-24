@@ -2006,7 +2006,12 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     getMessages: function getMessages() {
       var _this = this;
 
-      var last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
+      var last_message_id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+      if (!last_message_id) {
+        last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : null;
+      }
+
       Vue.axios.get('/getNewMessages', {
         params: {
           'last_message_id': last_message_id
@@ -2020,23 +2025,27 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       });
     },
     sendMessage: function sendMessage() {
+      var _this2 = this;
+
       if (this.content) {
         var last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
         Vue.axios.post('/storeMessage', {
           'user_id': this.userId,
           'content': this.content,
           'last_message_id': last_message_id
+        }).then(function (response) {
+          _this2.content = '';
+
+          if (!_this2.messages.length) {
+            _this2.getMessages(response.data.message_id - 1);
+          }
         });
-        this.content = '';
-        setTimeout(this.getMessages, 100);
       }
     }
   },
   created: function created() {
     this.messages = this.messagesProp;
     this.userId = this.userIdProp;
-  },
-  mounted: function mounted() {
     setInterval(this.getMessages, 500);
   }
 });
@@ -38081,18 +38090,37 @@ var render = function() {
             _c(
               "ul",
               { staticClass: "pl-0" },
-              _vm._l(_vm.messages, function(message) {
-                return _c("li", { key: message.id, staticClass: "my-3" }, [
-                  message.user.id === _vm.userId
+              _vm._l(_vm.messages, function(message, index) {
+                return _c("li", { key: index, staticClass: "my-3" }, [
+                  message.user_id === _vm.userId
                     ? _c(
                         "div",
-                        { staticClass: "border rounded px-3 py-2 badge-light" },
+                        {
+                          staticClass:
+                            "border rounded px-3 py-2 badge-light text-right"
+                        },
                         [
-                          _c("div", { staticClass: "col-12 px-0 text-right" }, [
+                          _c("div", { staticClass: "col-12 px-0" }, [
+                            _c("small", { staticClass: "font-weight-bold" }, [
+                              _c(
+                                "span",
+                                { staticStyle: { "font-size": "8px" } },
+                                [
+                                  _vm._v(
+                                    "\n                                            " +
+                                      _vm._s(message.created_at) +
+                                      "\n                                        "
+                                  )
+                                ]
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-12 px-0" }, [
                             _vm._v(
-                              "\n                                        " +
+                              "\n                                    " +
                                 _vm._s(message.content) +
-                                "\n                                    "
+                                "\n                                "
                             )
                           ])
                         ]
@@ -38196,17 +38224,7 @@ var render = function() {
           ])
         ])
       ])
-    ]),
-    _vm._v(" "),
-    _c(
-      "button",
-      {
-        staticClass: "btn btn-secondary",
-        attrs: { type: "button" },
-        on: { click: _vm.getMessages }
-      },
-      [_vm._v("\n        GET NEW\n    ")]
-    )
+    ])
   ])
 }
 var staticRenderFns = []

@@ -25,7 +25,7 @@ class GetNewRequest extends FormRequest
     public function rules()
     {
         return [
-            'last_message_id'   => 'required|integer'
+            'last_message_id'   => 'integer|nullable'
         ];
     }
 }
