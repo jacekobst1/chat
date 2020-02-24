@@ -1908,6 +1908,19 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1991,13 +2004,19 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     getMessages: function getMessages() {
+      var _this = this;
+
       var last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
       Vue.axios.get('/getNewMessages', {
         params: {
           'last_message_id': last_message_id
         }
       }).then(function (response) {
-        console.log(response); // this.messages.push(response.data.messages);
+        if (response.data.messages.length > 0) {
+          var _this$messages;
+
+          (_this$messages = _this.messages).push.apply(_this$messages, _toConsumableArray(response.data.messages));
+        }
       });
     },
     sendMessage: function sendMessage() {
@@ -2009,7 +2028,7 @@ __webpack_require__.r(__webpack_exports__);
           'last_message_id': last_message_id
         });
         this.content = '';
-        this.getMessages();
+        setTimeout(this.getMessages, 100);
       }
     }
   },
@@ -2017,7 +2036,8 @@ __webpack_require__.r(__webpack_exports__);
     this.messages = this.messagesProp;
     this.userId = this.userIdProp;
   },
-  mounted: function mounted() {// setInterval(this.getMessages, 10000);
+  mounted: function mounted() {
+    setInterval(this.getMessages, 500);
   }
 });
 
@@ -38057,12 +38077,12 @@ var render = function() {
         _c("div", { staticClass: "card" }, [
           _c("div", { staticClass: "card-header" }, [_vm._v("Chat")]),
           _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "card-body" },
-            _vm._l(_vm.messages, function(message) {
-              return _c("ul", { key: message.id }, [
-                _c("li", [
+          _c("div", { staticClass: "card-body" }, [
+            _c(
+              "ul",
+              { staticClass: "pl-0" },
+              _vm._l(_vm.messages, function(message) {
+                return _c("li", { key: message.id, staticClass: "my-3" }, [
                   message.user.id === _vm.userId
                     ? _c(
                         "div",
@@ -38089,7 +38109,18 @@ var render = function() {
                               _vm._v(
                                 "\n                                        " +
                                   _vm._s(message.user.email) +
-                                  "\n                                    "
+                                  "\n                                        "
+                              ),
+                              _c(
+                                "span",
+                                { staticStyle: { "font-size": "8px" } },
+                                [
+                                  _vm._v(
+                                    "\n                                            " +
+                                      _vm._s(message.created_at) +
+                                      "\n                                        "
+                                  )
+                                ]
                               )
                             ])
                           ]),
@@ -38104,10 +38135,10 @@ var render = function() {
                         ]
                       )
                 ])
-              ])
-            }),
-            0
-          ),
+              }),
+              0
+            )
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "card-footer text-muted" }, [
             _c("div", { staticClass: "input-group mb-3" }, [
@@ -38121,7 +38152,11 @@ var render = function() {
                   }
                 ],
                 staticClass: "form-control",
-                attrs: { type: "text", placeholder: "Your message" },
+                attrs: {
+                  type: "text",
+                  placeholder: "Your message",
+                  maxlength: "255"
+                },
                 domProps: { value: _vm.content },
                 on: {
                   keyup: function($event) {
@@ -50539,8 +50574,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /var/www/OTHER_PROJECTS/chat/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /var/www/OTHER_PROJECTS/chat/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /var/www/chat/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /var/www/chat/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

@@ -6,11 +6,12 @@
                     <div class="card-header">Chat</div>
 
                     <div class="card-body">
-                        <ul
-                                v-for="message in messages"
-                                :key="message.id"
-                        >
-                            <li>
+                        <ul class="pl-0">
+                            <li
+                                    v-for="message in messages"
+                                    :key="message.id"
+                                    class="my-3"
+                            >
                                 <div
                                         v-if="message.user.id === userId"
                                         class="border rounded px-3 py-2 badge-light"
@@ -26,6 +27,9 @@
                                     <div class="col-12 px-0">
                                         <small class="font-weight-bold">
                                             {{ message.user.email }}
+                                            <span style="font-size: 8px;">
+                                                {{ message.created_at }}
+                                            </span>
                                         </small>
                                     </div>
                                     <div class="col-12 px-0">
@@ -44,6 +48,7 @@
                                     type="text"
                                     class="form-control"
                                     placeholder="Your message"
+                                    maxlength="255"
                             >
                             <div class="input-group-append">
                                 <button
@@ -91,8 +96,9 @@
                             'last_message_id': last_message_id
                         }
                     }).then((response) => {
-                        console.log(response);
-                        // this.messages.push(response.data.messages);
+                        if (response.data.messages.length > 0) {
+                            this.messages.push(...response.data.messages);
+                        }
                     });
             },
             sendMessage: function() {
@@ -104,7 +110,7 @@
                         'last_message_id': last_message_id,
                     });
                     this.content = '';
-                    this.getMessages();
+                    setTimeout(this.getMessages, 100);
                 }
             }
         },
@@ -113,7 +119,7 @@
             this.userId = this.userIdProp;
         },
         mounted() {
-            // setInterval(this.getMessages, 10000);
+            setInterval(this.getMessages, 500);
         }
     }
 </script>

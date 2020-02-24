@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Message;
 use App\Repositories\MessageRepository;
 use App\Http\Requests\Message\StoreRequest;
 use App\Http\Requests\Message\GetNewRequest;
