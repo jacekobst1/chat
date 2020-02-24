@@ -59,6 +59,13 @@
                 </div>
             </div>
         </div>
+        <button
+            @click="getMessages"
+            type="button"
+            class="btn btn-secondary"
+        >
+            GET NEW
+        </button>
     </div>
 </template>
 
@@ -73,16 +80,32 @@
             return {
                 messages: [],
                 content: '',
-                userId: null
+                userId: null,
             }
         },
         methods: {
             getMessages: function() {
-                console.log('a');
+                let last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
+                Vue.axios.get('/getNewMessages', {
+                        params: {
+                            'last_message_id': last_message_id
+                        }
+                    }).then((response) => {
+                        console.log(response);
+                        // this.messages.push(response.data.messages);
+                    });
             },
             sendMessage: function() {
-                this.content = '';
-                console.log('b');
+                if (this.content) {
+                    let last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
+                    Vue.axios.post('/storeMessage', {
+                        'user_id': this.userId,
+                        'content': this.content,
+                        'last_message_id': last_message_id,
+                    });
+                    this.content = '';
+                    this.getMessages();
+                }
             }
         },
         created() {
@@ -90,7 +113,7 @@
             this.userId = this.userIdProp;
         },
         mounted() {
-            setInterval(this.getMessages, 1000);
+            // setInterval(this.getMessages, 10000);
         }
     }
 </script>

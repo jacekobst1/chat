@@ -16,6 +16,8 @@
 Auth::routes(['register' => false]);
 
 Route::group(['auth'], function() {
-    Route::get('/', 'ChatController@index')->name('chat');
+    Route::get('/',                     'MessageController@index');
+    Route::get('/getNewMessages',       'MessageController@getNew');
+    Route::post('/storeMessage',        'MessageController@store');
 });
 
