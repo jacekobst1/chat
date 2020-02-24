@@ -13,6 +13,6 @@ class Message extends Model
     ];
 
     public function User() {
-        return $this->belongsTo('/app/User');
+        return $this->belongsTo('\app\User');
     }
 }

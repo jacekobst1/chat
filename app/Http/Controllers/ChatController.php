@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 
 class ChatController extends Controller
 {
@@ -23,6 +25,9 @@ class ChatController extends Controller
      */
     public function index()
     {
-        return view('chat');
+        $messages = Message::whereDate('created_at', '<=', Date::now())
+            ->with('user:id,email')
+            ->get();
+        return view('chat', compact('messages'));
     }
 }
