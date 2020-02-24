@@ -13,7 +13,7 @@
 
 
 
-Auth::routes(['register' => false]);
+Auth::routes(['register' => false, 'reset' => false]);
 
 Route::group(['auth'], function() {
     Route::get('/',                     'MessageController@index');
