@@ -25,8 +25,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'user_id'           => 'required|integer|exists:App\User,id',
-            'content'           => 'present|string|max:255',
-            'last_message_id'   => 'required|integer'
+            'content'           => 'present|string|max:255'
         ];
     }
 }

@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Repositories\MessageRepository;
 use App\Http\Requests\StoreRequest;
-use App\Http\Requests\GetNewRequest;
 use App\Services\CacheMessageService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class MessageController extends Controller
 {
@@ -20,9 +21,9 @@ class MessageController extends Controller
         return view('chat', compact('messages'));
     }
 
-    public function getNew(GetNewRequest $request)
+    public function getNew()
     {
-        $messages = CacheMessageService::getNewAfterId($request->last_message_id);
+        $messages = CacheMessageService::getNew();
         return response()->json(['status' => 'ok', 'status_code' => 200, 'messages' => $messages], 200);
     }
 
@@ -31,4 +32,6 @@ class MessageController extends Controller
         $message = CacheMessageService::store($request->all());
         return response()->json(['status' => 'ok', 'status_code' => 200, 'message_id' => $message->id], 200);
     }
+
+
 }

@@ -51,7 +51,6 @@ class LoginController extends Controller
         $this->saveLoginDate($user);
 
         auth()->loginUsingId($user->id);
-        $this->cacheInitMessageOfUser();
         return $this->sendLoginResponse($request);
     }
 
@@ -78,12 +77,5 @@ class LoginController extends Controller
     private function saveLoginDate(User $user): void
     {
         $user->update(['last_login_date' => Date::now()]);
-    }
-
-    private function cacheInitMessageOfUser(): void
-    {
-        $initMessage = Message::orderBy('id', 'DESC')->first();
-        $id = $initMessage ? $initMessage->id : 0;
-        session()->put('init_message_id', $id);
     }
 }

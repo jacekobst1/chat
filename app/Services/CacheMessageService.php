@@ -3,38 +3,34 @@
 namespace App\Services;
 
 use App\Message;
+use App\Repositories\MessageRepository;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class CacheMessageService
 {
-    static public function getNewAfterId(?int $id): array
+    static public function getNew()
     {
-        $messages = [];
-        if ($id === null) {
-            $id = session()->get('init_message_id');
-        }
-        if (
-            Cache::get('last_message_id') !== $id
-            && strtotime(Cache::get('last_message_date')) >= strtotime(auth()->user()->last_login_at)
-        ) {
-            $last_message_id = Cache::get('last_message_id') ?: 0;
-            for ($i = $id+1; $i <= $last_message_id; $i++) {
-                $message = Cache::get('message_' . $i);
-                if ($message) {
-                    $messages[] = $message;
-                }
+        while (true) {
+            sleep(0.5);
+            if ( Cache::get('trigger_session_'.session()->getId()) ) {
+                Cache::forget('trigger_session_'.session()->getId());
+                return MessageRepository::getMessagesCreatedAfterDate();
             }
         }
-        return $messages;
     }
 
     static public function store(array $data): Message
     {
         $message_id = Message::create($data)->id;
         $message = Message::with('user:id,email')->findOrFail($message_id);
-        Cache::forever('last_message_id', $message_id);
-        Cache::forever('last_message_date', $message->created_at);
-        Cache::put('message_'.$message_id, $message, 5);
+
+        foreach (Redis::connection('default')->command('keys',['*']) as $key) {
+            $session_id = substr($key, strpos($key, ":") + 1);
+            Cache::put('trigger_session_'.$session_id, true, 5);
+        }
+
         return $message;
     }
 }
+

@@ -7,7 +7,7 @@ Auth::routes(['register' => false, 'reset' => false]);
 
 Route::group(['auth'], function() {
     Route::get('/',                     'MessageController@index');
-    Route::get('/getNewMessages',       'MessageController@getNew');
+    Route::get('/getNew',               'MessageController@getNew');
     Route::post('/storeMessage',        'MessageController@store');
 });
 
@@ -16,3 +16,4 @@ Route::get('/reset', function() {
     Artisan::call('migrate:fresh');
     return redirect('/');
 });
+

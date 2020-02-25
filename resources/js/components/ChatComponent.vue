@@ -88,45 +88,31 @@
             }
         },
         methods: {
-            getMessages: function(last_message_id = null) {
-                if (last_message_id === null) {
-                    last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : null;
+            listenForNewMessages: async function() {
+                let response = await fetch("/getNew");
+                if (response.status === 200) {
+                    let resp = await response.json();
+                    this.content = '';
+                    console.log(resp);
+                    this.messages = resp.messages;
+                    await this.listenForNewMessages();
+                } else {
+                    await this.listenForNewMessages();
                 }
-                Vue.axios.get('/getNewMessages', {
-                        params: {
-                            'last_message_id': last_message_id
-                        }
-                    }).then((response) => {
-                        if (response.data.messages.length > 0) {
-                            this.messages.push(...response.data.messages);
-                        }
-                    });
             },
             sendMessage: function() {
                 if (this.content) {
-                    let last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
                     Vue.axios.post('/storeMessage', {
-                            'user_id': this.userId,
-                            'content': this.content,
-                            'last_message_id': last_message_id,
-                        })
-                        .then((response) => {
-                            this.content = '';
-                            if (!this.messages.length) {
-                                clearInterval(this.interval);
-                                setTimeout(() => {
-                                    this.getMessages(response.data.message_id-1);
-                                }, 100);
-                                setInterval(this.getMessages, 500);
-                            }
-                        });
+                        'user_id': this.userId,
+                        'content': this.content
+                    });
                 }
-            },
+            }
         },
         created() {
             this.messages = this.messagesProp;
             this.userId = this.userIdProp;
-            this.interval = setInterval(this.getMessages, 500);
+            this.listenForNewMessages();
         },
     }
 </script>
