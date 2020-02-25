@@ -93,8 +93,7 @@
                 if (response.status === 200) {
                     let resp = await response.json();
                     this.content = '';
-                    console.log(resp);
-                    this.messages = resp.messages;
+                    this.messages.push(...resp.messages);
                     await this.listenForNewMessages();
                 } else {
                     await this.listenForNewMessages();

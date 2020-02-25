@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Repositories\MessageRepository;
 use App\Http\Requests\StoreRequest;
 use App\Services\CacheMessageService;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Redis;
 
 class MessageController extends Controller
 {
@@ -17,7 +15,7 @@ class MessageController extends Controller
 
     public function index(MessageRepository $messageRepository)
     {
-        $messages = $messageRepository->getMessagesCreatedAfterDate();
+        $messages = $messageRepository->getMessagesCreatedAfterLoginDate();
         return view('chat', compact('messages'));
     }
 
