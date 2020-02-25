@@ -1997,16 +1997,17 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     return {
       messages: [],
       content: '',
-      userId: null
+      userId: null,
+      interval: null
     };
   },
   methods: {
     getMessages: function getMessages() {
       var _this = this;
 
-      var last_message_id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      var last_message_id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-      if (!last_message_id) {
+      if (last_message_id === null) {
         last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : null;
       }
 
@@ -2035,7 +2036,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           _this2.content = '';
 
           if (!_this2.messages.length) {
-            _this2.getMessages(response.data.message_id - 1);
+            clearInterval(_this2.interval);
+            setTimeout(function () {
+              _this2.getMessages(response.data.message_id - 1);
+            }, 100);
+            setInterval(_this2.getMessages, 500);
           }
         });
       }
@@ -2044,7 +2049,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   created: function created() {
     this.messages = this.messagesProp;
     this.userId = this.userIdProp;
-    setInterval(this.getMessages, 500);
+    this.interval = setInterval(this.getMessages, 500);
   }
 });
 
@@ -6593,7 +6598,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\nul {\n    list-style: none;\n}\n", ""]);
+exports.push([module.i, "\nul {\n    list-style: none;\n}\n.font-size-8 {\n    font-size: 8px\n}\n", ""]);
 
 // exports
 
@@ -38098,17 +38103,13 @@ var render = function() {
                         [
                           _c("div", { staticClass: "col-12 px-0" }, [
                             _c("small", { staticClass: "font-weight-bold" }, [
-                              _c(
-                                "span",
-                                { staticStyle: { "font-size": "8px" } },
-                                [
-                                  _vm._v(
-                                    "\n                                            " +
-                                      _vm._s(message.created_at) +
-                                      "\n                                        "
-                                  )
-                                ]
-                              )
+                              _c("span", { staticClass: "font-size-8" }, [
+                                _vm._v(
+                                  "\n                                            " +
+                                    _vm._s(message.created_at) +
+                                    "\n                                        "
+                                )
+                              ])
                             ])
                           ]),
                           _vm._v(" "),
@@ -38135,17 +38136,13 @@ var render = function() {
                                   _vm._s(message.user.email) +
                                   "\n                                        "
                               ),
-                              _c(
-                                "span",
-                                { staticStyle: { "font-size": "8px" } },
-                                [
-                                  _vm._v(
-                                    "\n                                            " +
-                                      _vm._s(message.created_at) +
-                                      "\n                                        "
-                                  )
-                                ]
-                              )
+                              _c("span", { staticClass: "font-size-8" }, [
+                                _vm._v(
+                                  "\n                                            " +
+                                    _vm._s(message.created_at) +
+                                    "\n                                        "
+                                )
+                              ])
                             ])
                           ]),
                           _vm._v(" "),

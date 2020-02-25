@@ -10,16 +10,19 @@ class CacheMessageService
     static public function getNewAfterId(?int $id): array
     {
         $messages = [];
-        if (!$id) {
-            $id = Cache::get('init_message_of_user_'.auth()->id());
+        if ($id === null) {
+            $id = session()->get('init_message_id');
         }
         if (
             Cache::get('last_message_id') !== $id
             && strtotime(Cache::get('last_message_date')) >= strtotime(auth()->user()->last_login_at)
         ) {
-            $last_message_id = Cache::get('last_message_id') ?: -1;
+            $last_message_id = Cache::get('last_message_id') ?: 0;
             for ($i = $id+1; $i <= $last_message_id; $i++) {
-                $messages[] = Cache::get('message_' . $i);
+                $message = Cache::get('message_' . $i);
+                if ($message) {
+                    $messages[] = $message;
+                }
             }
         }
         return $messages;

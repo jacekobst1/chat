@@ -16,7 +16,7 @@
                                 >
                                     <div class="col-12 px-0">
                                         <small class="font-weight-bold">
-                                            <span style="font-size: 8px;">
+                                            <span class="font-size-8">
                                                 {{ message.created_at }}
                                             </span>
                                         </small>
@@ -32,7 +32,7 @@
                                     <div class="col-12 px-0">
                                         <small class="font-weight-bold">
                                             {{ message.user.email }}
-                                            <span style="font-size: 8px;">
+                                            <span class="font-size-8">
                                                 {{ message.created_at }}
                                             </span>
                                         </small>
@@ -83,12 +83,13 @@
             return {
                 messages: [],
                 content: '',
-                userId: null
+                userId: null,
+                interval: null
             }
         },
         methods: {
-            getMessages: function(last_message_id = 0) {
-                if (!last_message_id) {
+            getMessages: function(last_message_id = null) {
+                if (last_message_id === null) {
                     last_message_id = this.messages.length ? this.messages[this.messages.length - 1].id : null;
                 }
                 Vue.axios.get('/getNewMessages', {
@@ -112,7 +113,11 @@
                         .then((response) => {
                             this.content = '';
                             if (!this.messages.length) {
-                                this.getMessages(response.data.message_id-1);
+                                clearInterval(this.interval);
+                                setTimeout(() => {
+                                    this.getMessages(response.data.message_id-1);
+                                }, 100);
+                                setInterval(this.getMessages, 500);
                             }
                         });
                 }
@@ -121,7 +126,7 @@
         created() {
             this.messages = this.messagesProp;
             this.userId = this.userIdProp;
-            setInterval(this.getMessages, 500);
+            this.interval = setInterval(this.getMessages, 500);
         },
     }
 </script>
@@ -129,5 +134,8 @@
 <style>
     ul {
         list-style: none;
+    }
+    .font-size-8 {
+        font-size: 8px
     }
 </style>

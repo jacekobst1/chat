@@ -57,7 +57,6 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        $this->forgetInitMessageOfUser();
         $this->guard()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -84,12 +83,7 @@ class LoginController extends Controller
     private function cacheInitMessageOfUser(): void
     {
         $initMessage = Message::orderBy('id', 'DESC')->first();
-        $id = $initMessage ? $initMessage->id : -1;
-        Cache::put('init_message_of_user_'.auth()->id(), $id, config('env.SESSION_LIFETIME'));
-    }
-
-    private function forgetInitMessageOfUser(): void
-    {
-        Cache::forget('init_message_of_user_'.auth()->id());
+        $id = $initMessage ? $initMessage->id : 0;
+        session()->put('init_message_id', $id);
     }
 }
