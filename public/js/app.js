@@ -2017,8 +2017,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return {
       messages: [],
       content: '',
-      userId: null,
-      interval: null
+      userId: null
     };
   },
   methods: {
@@ -2026,46 +2025,43 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _listenForNewMessages = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var last_message_id, response, _this$messages, resp;
+        var response, _this$messages, resp;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                last_message_id = this.messages.length ? this.messages[this.messages.length - 1] : 0;
-                _context.next = 3;
-                return fetch("/getNew");
+                _context.next = 2;
+                return fetch("/getNewMessages");
 
-              case 3:
+              case 2:
                 response = _context.sent;
 
                 if (!(response.status === 200)) {
-                  _context.next = 15;
+                  _context.next = 12;
                   break;
                 }
 
-                _context.next = 7;
+                _context.next = 6;
                 return response.json();
 
-              case 7:
+              case 6:
                 resp = _context.sent;
-                this.content = '';
-                console.log(resp);
 
                 (_this$messages = this.messages).push.apply(_this$messages, _toConsumableArray(resp.messages));
 
-                _context.next = 13;
+                _context.next = 10;
                 return this.listenForNewMessages();
 
-              case 13:
-                _context.next = 17;
+              case 10:
+                _context.next = 14;
                 break;
 
-              case 15:
-                _context.next = 17;
+              case 12:
+                _context.next = 14;
                 return this.listenForNewMessages();
 
-              case 17:
+              case 14:
               case "end":
                 return _context.stop();
             }
@@ -2085,6 +2081,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           'user_id': this.userId,
           'content': this.content
         });
+        this.content = '';
       }
     }
   },
@@ -51364,8 +51361,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /var/www/OTHER_PROJECTS/chat/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /var/www/OTHER_PROJECTS/chat/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /var/www/chat/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /var/www/chat/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

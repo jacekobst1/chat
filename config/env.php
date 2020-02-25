@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'SESSION_LIFETIME'  => env('SESSION_LIFETIME', 120)
+    'SESSION_DRIVER'        => env('SESSION_DRIVER', 'redis'),
+    'SESSION_CONNECTION'    => env('SESSION_CONNECTION', 'session'),
 ];

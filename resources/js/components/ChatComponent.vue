@@ -83,16 +83,14 @@
             return {
                 messages: [],
                 content: '',
-                userId: null,
-                interval: null
+                userId: null
             }
         },
         methods: {
             listenForNewMessages: async function() {
-                let response = await fetch("/getNew");
+                let response = await fetch("/getNewMessages");
                 if (response.status === 200) {
                     let resp = await response.json();
-                    this.content = '';
                     this.messages.push(...resp.messages);
                     await this.listenForNewMessages();
                 } else {
@@ -105,6 +103,7 @@
                         'user_id': this.userId,
                         'content': this.content
                     });
+                    this.content = '';
                 }
             }
         },

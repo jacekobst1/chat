@@ -7,7 +7,7 @@ Auth::routes(['register' => false, 'reset' => false]);
 
 Route::group(['auth'], function() {
     Route::get('/',                     'MessageController@index');
-    Route::get('/getNew',               'MessageController@getNew');
+    Route::get('/getNewMessages',       'MessageController@getNew');
     Route::post('/storeMessage',        'MessageController@store');
 });
 

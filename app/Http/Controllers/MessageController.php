@@ -27,8 +27,8 @@ class MessageController extends Controller
 
     public function store(StoreRequest $request)
     {
-        $message = CacheMessageService::store($request->all());
-        return response()->json(['status' => 'ok', 'status_code' => 200, 'message_id' => $message->id], 200);
+        CacheMessageService::store($request->all());
+        return response()->json(['status' => 'ok', 'status_code' => 200], 200);
     }
 
 
