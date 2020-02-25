@@ -1,23 +1,24 @@
 <?php
 
-namespace App\Services\Message;
+namespace App\Services;
 
 use App\Message;
 use Illuminate\Support\Facades\Cache;
 
-class CacheMessagesService
+class CacheMessageService
 {
     static public function getNewAfterId(?int $id): array
     {
         $messages = [];
         if (!$id) {
-            $id = self::getInitId();
+            $id = Cache::get('init_message_of_user_'.auth()->id());
         }
         if (
-            strtotime(Cache::get('last_message_date')) >= strtotime(auth()->user()->last_login_at)
-            && Cache::get('last_message_id') !== $id
+            Cache::get('last_message_id') !== $id
+            && strtotime(Cache::get('last_message_date')) >= strtotime(auth()->user()->last_login_at)
         ) {
-            for ($i = $id + 1; $i <= Cache::get('last_message_id'); $i++) {
+            $last_message_id = Cache::get('last_message_id') ?: -1;
+            for ($i = $id+1; $i <= $last_message_id; $i++) {
                 $messages[] = Cache::get('message_' . $i);
             }
         }
@@ -32,16 +33,5 @@ class CacheMessagesService
         Cache::forever('last_message_date', $message->created_at);
         Cache::put('message_'.$message_id, $message, 5);
         return $message;
-    }
-
-    static private function getInitId()
-    {
-        $id = Cache::get('init_message_of_user_'.auth()->id());
-        if (!$id) {
-            $initMessage = Message::orderBy('id', 'DESC')->first();
-            $id = $initMessage ? $initMessage->id : -1;
-            Cache::put('init_message_of_user_'.auth()->id(), $id, 3);
-        }
-        return $id;
     }
 }

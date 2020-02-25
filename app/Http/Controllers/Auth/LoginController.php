@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Message;
 use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 
 class LoginController extends Controller
@@ -49,7 +51,17 @@ class LoginController extends Controller
         $this->saveLoginDate($user);
 
         auth()->loginUsingId($user->id);
+        $this->cacheInitMessageOfUser();
         return $this->sendLoginResponse($request);
+    }
+
+    public function logout(Request $request)
+    {
+        $this->forgetInitMessageOfUser();
+        $this->guard()->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return $this->loggedOut($request) ?: redirect('/');
     }
 
     private function validateLogin(Request $request)
@@ -59,13 +71,25 @@ class LoginController extends Controller
         ]);
     }
 
-    private function getOrCreateUser($email): User
+    private function getOrCreateUser(string $email): User
     {
         return User::firstOrCreate(['email' => $email], ['last_login_date' => Date::now()]);
     }
 
-    private function saveLoginDate($user): void
+    private function saveLoginDate(User $user): void
     {
         $user->update(['last_login_date' => Date::now()]);
+    }
+
+    private function cacheInitMessageOfUser(): void
+    {
+        $initMessage = Message::orderBy('id', 'DESC')->first();
+        $id = $initMessage ? $initMessage->id : -1;
+        Cache::put('init_message_of_user_'.auth()->id(), $id, config('env.SESSION_LIFETIME'));
+    }
+
+    private function forgetInitMessageOfUser(): void
+    {
+        Cache::forget('init_message_of_user_'.auth()->id());
     }
 }

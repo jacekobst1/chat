@@ -1990,8 +1990,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'chat-component',
   props: ['messagesProp', 'userIdProp'],
@@ -38084,8 +38082,6 @@ var render = function() {
     _c("div", { staticClass: "row justify-content-center" }, [
       _c("div", { staticClass: "col-md-8" }, [
         _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header" }, [_vm._v("Chat")]),
-          _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
             _c(
               "ul",
@@ -50592,8 +50588,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /var/www/chat/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /var/www/chat/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /var/www/OTHER_PROJECTS/chat/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /var/www/OTHER_PROJECTS/chat/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
