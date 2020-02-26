@@ -2013,10 +2013,14 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       });
     },
     sendMessage: function sendMessage() {
+      var _this2 = this;
+
       if (this.content) {
         Vue.axios.post('/storeMessage', {
           'user_id': this.userId,
           'content': this.content
+        }).then(function (response) {
+          _this2.messages.push(response.data.message);
         });
         this.content = '';
       }

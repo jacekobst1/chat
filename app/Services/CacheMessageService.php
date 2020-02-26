@@ -26,19 +26,22 @@ class CacheMessageService
 
     /**
      * @param array $data
-     * @return void
+     * @return Message
      */
-    static public function store(array $data): void
+    static public function store(array $data): Message
     {
         $message_id = Message::create($data)->id;
         $message = Message::with('user:id,email')->findOrFail($message_id);
         $cache = Redis::connection('cache');
         foreach (Redis::connection('session')->command('keys', ['*']) as $key) {
             $session_id = substr($key, strpos($key, ":") + 1);
-            $cache->lpush('session_messages_'.$session_id, json_encode($message));
-            $cache->set('trigger_session_'.$session_id, true);
-            $cache->expire('trigger_session_'.$session_id, 5);
+            if ($session_id !== session()->getId()) {
+                $cache->lpush('session_messages_' . $session_id, json_encode($message));
+                $cache->set('trigger_session_' . $session_id, true);
+                $cache->expire('trigger_session_' . $session_id, 5);
+            }
         }
+        return $message;
     }
 }
 

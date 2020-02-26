@@ -99,6 +99,9 @@
                     Vue.axios.post('/storeMessage', {
                         'user_id': this.userId,
                         'content': this.content
+                    })
+                    .then((response) => {
+                        this.messages.push(response.data.message);
                     });
                     this.content = '';
                 }
