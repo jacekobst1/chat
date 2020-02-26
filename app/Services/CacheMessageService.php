@@ -37,8 +37,9 @@ class CacheMessageService
             $session_id = substr($key, strpos($key, ":") + 1);
             if ($session_id !== session()->getId()) {
                 $cache->lpush('session_messages_' . $session_id, json_encode($message));
+                $cache->expire('session_messages_' . $session_id, 10);
                 $cache->set('trigger_session_' . $session_id, true);
-                $cache->expire('trigger_session_' . $session_id, 5);
+                $cache->expire('trigger_session_' . $session_id, 10);
             }
         }
         return $message;
