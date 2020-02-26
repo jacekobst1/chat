@@ -12,19 +12,16 @@ class CacheMessageService
      */
     static public function getNew(): array
     {
-        $cache = Redis::connection('cache');
-        while (true) {
-            if ( $cache->exists('trigger_session_'.session()->getId()) ) {
-                $cache->del('trigger_session_'.session()->getId());
-                $messages = [];
+        $messages = [];
+        if ( Redis::connection('cache')->exists('trigger_session_'.session()->getId()) ) {
+                Redis::connection('cache')->del('trigger_session_'.session()->getId());
                 while (true) {
-                    $message = $cache->rpop('session_messages_'.session()->getId());
+                    $message = Redis::connection('cache')->rpop('session_messages_'.session()->getId());
                     if ($message) $messages[] = json_decode($message);
                     else break;
                 }
-                return $messages;
             }
-        }
+        return $messages;
     }
 
     /**
@@ -40,7 +37,7 @@ class CacheMessageService
             $session_id = substr($key, strpos($key, ":") + 1);
             $cache->lpush('session_messages_'.$session_id, json_encode($message));
             $cache->set('trigger_session_'.$session_id, true);
-            $cache->expire('trigger_session_'.$session_id, 60);
+            $cache->expire('trigger_session_'.$session_id, 5);
         }
     }
 }

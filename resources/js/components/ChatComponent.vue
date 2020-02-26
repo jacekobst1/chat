@@ -87,15 +87,12 @@
             }
         },
         methods: {
-            listenForNewMessages: async function() {
-                let response = await fetch("/getNewMessages");
-                if (response.status === 200) {
-                    let resp = await response.json();
-                    this.messages.push(...resp.messages);
-                    await this.listenForNewMessages();
-                } else {
-                    await this.listenForNewMessages();
-                }
+            getNewMessages: function() {
+                Vue.axios.get('/getNewMessages').then((response) => {
+                    if (response.status === 200) {
+                        this.messages.push(...response.data.messages);
+                    }
+                });
             },
             sendMessage: function() {
                 if (this.content) {
@@ -110,7 +107,7 @@
         created() {
             this.messages = this.messagesProp;
             this.userId = this.userIdProp;
-            this.listenForNewMessages();
+            setInterval(this.getNewMessages, 750);
         },
     }
 </script>
